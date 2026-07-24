@@ -75,15 +75,15 @@ def dice_loss(pred, target, eps=1e-6):
     return 1 - (num / den).mean()
 
 
-def bce_dice_loss(pred_logits, target, dice_weight=1.0):
+def bce_dice_loss(pred_logits, target, dice_weight=1.0): BCE 主要关心每个像素分类是否正确
     """BCE + Dice loss combo for multi-channel mask prediction."""
     bce = F.binary_cross_entropy_with_logits(pred_logits, target)
     dice = dice_loss(torch.sigmoid(pred_logits), target)
     return bce + dice_weight * dice
 
 
-def iou(pred_binary, target_binary, eps=1e-6):
-    """Per-class IoU. Inputs are (B, C, H, W) binary. Returns (C,) tensor."""
+def iou(pred_binary, target_binary, eps=1e-6): 定义 Intersection over Union。输入必须已经是 binary mask。
+    """Per-class IoU. Inputs are (B, C, H, W) binary. Returns (C,) tensor.""" 把 batch 中所有样本合并统计 分别计算每个 channel 的 IoU
     dims = (0, 2, 3)
     inter = (pred_binary * target_binary).sum(dims)
     union = pred_binary.sum(dims) + target_binary.sum(dims) - inter
